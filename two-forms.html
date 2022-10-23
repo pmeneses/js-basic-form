@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous"
+        >
+        <style>
+            .formErrorMessage {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Validando 2 formularios</h1>
+        <div style="
+            display: flex;
+            align-self: center;
+            flex-direction: column;
+            align-items: center;
+        ">
+            <div class="mb-3">
+                <label for="name" class="form-label">Nombre completo</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    placeholder="Jhon Doe"
+                    onchange="onChangeFieldValue(form1, 'name', this.value)"
+                />
+                <span id="name" class="formErrorMessage" />
+            </div>
+            <div class="mb-3">
+                <label for="age" class="form-label">Nombre completo</label>
+                <input
+                    type="number"
+                    class="form-control"
+                    id="age"
+                    placeholder="18"
+                    onchange="onChangeFieldValue(form1, 'age', this.value)"
+                >
+                <span id="age" class="formErrorMessage" />
+            </div>
+            <button
+                type="button"
+                class="btn btn-primary"
+                onclick="validateForm(form1)"
+            >
+                Validar Formulario
+            </button>
+        </div>
+        <br />
+        <div style="
+            display: flex;
+            align-self: center;
+            flex-direction: column;
+            align-items: center;
+        ">
+            <div class="mb-3">
+                <label for="name" class="form-label">Numero Telefonico</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="phoneNumber"
+                    placeholder="+50588888888"
+                    onchange="onChangeFieldValue(form2, 'phoneNumber', this.value)"
+                />
+                <span id="phoneNumber" class="formErrorMessage" />
+            </div>
+            <div class="mb-3">
+                <label for="age" class="form-label">Direccion de correo electronico</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="email"
+                    placeholder="jhon.doe@test.com"
+                    onchange="onChangeFieldValue(form2, 'email', this.value)"
+                >
+                <span id="email" class="formErrorMessage" />
+            </div>
+            <button
+                type="button"
+                class="btn btn-primary"
+                onclick="validateForm(form2)"
+            >
+                Validar Formulario
+            </button>
+        </div>
+        <script src="form.js" type="text/javascript"></script>
+        <script>
+            const form1 = new formUtil()
+            const form2 = new formUtil()
+            window.onload = () => {
+                form1.createForm({
+                    key: 'test-1',
+                    fields: {
+                        name: {
+                            type: form1.FieldTypes.STRING,
+                            required: {
+                                message: 'campo requerido'
+                            },
+                        },
+                        age: {
+                            type: form1.FieldTypes.NUMBER,
+                            min: {
+                                value: 10,
+                            }
+                        }
+                    }
+                })
+
+                form2.createForm({
+                    key: 'test-2',
+                    fields: {
+                        phoneNumber: {
+                            type: form2.FieldTypes.STRING,
+                            required: {
+                                message: 'campo requerido'
+                            },
+                        },
+                        email: {
+                            type: form2.FieldTypes.STRING,
+                            required: {
+                                message: 'campo requerido'
+                            },
+                            test: {
+                                regex: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w+)+$/,
+                                message: 'Ingresa un email valido'
+                            }
+                        }
+                    }
+                })
+            }
+
+            const onChangeFieldValue = (form, field, value) => {
+                form.setValue(field, value)
+            }
+
+            const validateForm = (form) => {
+                const errors = form.validateForm()
+                const errorTags = document.getElementsByClassName('formErrorMessage')
+                for (let error in errors) {
+                    const errorTag = errorTags[error]
+                    if (errors[error] && errorTag) {
+                        errorTag.innerHTML = errors[error]
+                    } else errorTag.innerHTML = ''
+                }
+            }
+        </script>
+    </body>
+</html>
