@@ -90,27 +90,27 @@ Los errores se visualizaran de la siguiente forma
 | min |
 | test |
 
-### configuracion para regla required 
+### propiedades de la regla required 
 
 | name            | descripción            |
 | ----------------- | ----------------- |
 | message | mensaje a mostrar cuando la regla no se cumpla |
 
-### configuracion para regla min 
+### propiedades de la regla min 
 
 | name            | descripción            |
 | ----------------- | ----------------- |
 | value | valor minimo permitido |
 | message | mensaje a mostrar cuando la regla no se cumpla |
 
-### configuracion para regla max 
+### propiedades de la regla max 
 
 | name            | descripción            |
 | ----------------- | ----------------- |
 | value | valor maximo permitido |
 | message | mensaje a mostrar cuando la regla no se cumpla |
 
-### configuracion para regla test 
+### propiedades de la regla test 
 
 | name            | descripción            |
 | ----------------- | ----------------- |
