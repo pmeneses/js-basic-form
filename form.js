@@ -190,3 +190,5 @@ const formUtil = class {
         return this.getFormErrors()
     }
 }
+
+const initFormInstance = () => new formUtil()
