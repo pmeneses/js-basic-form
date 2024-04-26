@@ -1,0 +1,20 @@
+{
+  "name": "basic-form",
+  "version": "1.0.0",
+  "description": "manage forms with javascript",
+  "main": "form.js",
+  "scripts": {
+    "prebuild": "mkdir dist",
+    "clean:dist": "rm -rf dist && mkdir dist",
+    "build:dev": "npm run clean:dist && babel form.js --out-file dist/form.js",
+    "build:dev:watch": "npm run clean:dist && babel form.js --out-file dist/form.js --watch",
+    "build": "npm run clean:dist && babel form.js --out-file dist/form.js --source-maps inline",
+    "build:minify": "npm run clean:dist && babel form.js --out-file dist/form.min.js --source-maps inline --presets minify"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.24.1",
+    "@babel/core": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
+    "babel-preset-minify": "^0.5.2"
+  }
+}
