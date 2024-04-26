@@ -24,9 +24,9 @@ const formUtil = class {
     
     validateRequired = ({ type, field, fieldValue, ruleConfig }) => {
         let hasError = false
-        if (type === this.FieldTypes.STRING || type === this.FieldTypes.DATE) {
-            if (!fieldValue) hasError = true
-        } else if (fieldValue === undefined) {
+        if (type === this.FieldTypes.BOOL) {
+            if (fieldValue === undefined) hasError = true
+        } else if (!fieldValue) {
             hasError = true
         }
 
