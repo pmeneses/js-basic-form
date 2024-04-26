@@ -8,15 +8,13 @@ const formUtil = class {
     }
 
     constructor() {
-        this.formKey = ''
         this.fieldRules = {}
         this.formFields = {}
         this.fieldErrors = {}
     }
     
     getDefaultValue = (type) => {
-        let value = ''
-        if (type === this.FieldTypes.NUMBER) value = 0;
+        let value = undefined
         if (type === this.FieldTypes.BOOL) value = false;
 
         return value
@@ -24,11 +22,11 @@ const formUtil = class {
 
     //#region metodos para validar los valores
     
-    validateRequired = (type, field, value, ruleConfig) => {
+    validateRequired = ({ type, field, fieldValue, ruleConfig }) => {
         let hasError = false
         if (type === this.FieldTypes.STRING || type === this.FieldTypes.DATE) {
-            if (!value) hasError = true
-        } else if (value === undefined) {
+            if (!fieldValue) hasError = true
+        } else if (fieldValue === undefined) {
             hasError = true
         }
 
@@ -40,10 +38,10 @@ const formUtil = class {
         else undefined
     }
 
-    validateMin = (type, fieldValue, ruleConfig) => {
+    validateMin = ({ type, fieldValue, ruleConfig }) => {
         if (type === this.FieldTypes.NUMBER) {
             const { message, value } = ruleConfig
-            if (fieldValue < value) {
+            if (!!fieldValue && (fieldValue < value)) {
                 return message || `El valor no puede ser menor a ${value}`
             }
         }
@@ -51,10 +49,10 @@ const formUtil = class {
         return undefined
     }
 
-    validateMax = (type, fieldValue, ruleConfig) => {
+    validateMax = ({ type, fieldValue, ruleConfig }) => {
         if (type === this.FieldTypes.NUMBER) {
             const { message, value } = ruleConfig
-            if (fieldValue > value) {
+            if (!!fieldValue && (fieldValue > value)) {
                 return message || `El valor no puede ser mayor a ${value}`
             }
         }
@@ -62,7 +60,7 @@ const formUtil = class {
         return undefined
     }
 
-    validateTest = (type, value, ruleConfig) => {
+    validateTest = ({ type, value, ruleConfig }) => {
         if (type === this.FieldTypes.STRING) {
             const { message, regex } = ruleConfig
             if (regex) {
@@ -78,9 +76,15 @@ const formUtil = class {
 
     //#endregion
 
+    rulesFunc = {
+        required: this.validateRequired.bind(),
+        min: this.validateMin.bind(),
+        max: this.validateMax.bind(),
+        test: this.validateTest.bind(),
+    }
+
     createForm = (props) => {
-        const {key, fields} = props
-        this.formKey = key
+        const { fields } = props
         for(let field in fields) {
             const {
                 type,
@@ -104,13 +108,15 @@ const formUtil = class {
 
             this.formFields = {
                 ...this.formFields,
-                [field]: initialValue || this.getDefaultValue(`${type}`), 
+                [field]: undefined, 
             }
 
             this.fieldErrors = {
                 ...this.fieldErrors,
                 [field]: '', 
             }
+
+            this.setValue(field, initialValue || this.getDefaultValue(`${type}`))
         }
     }
 
@@ -122,60 +128,46 @@ const formUtil = class {
         return this.fieldErrors ?? {}
     }
 
-    setValues = (fields) => {
-        let internalFields = this.formFields
-        for(let field in internalFields) {
-            if (fields[field]) {
-                internalFields[field] = fields[field]
-            }
-        }
-    }
-
     setValue = (key, value) => {
         let fields = this.formFields
         for(let field in fields) {
             if (field === key) {
+                const fieldComponent = document.getElementById(field)
                 fields[field] = value
+                fieldComponent.setAttribute('value', value  ?? '')
             }
         }
     }
 
+    setValues = (fields) => {
+        let internalFields = this.formFields
+        for(let field in internalFields) {
+            this.setValue(field, fields[field])
+        }
+    }
+
+    
+
     validateField = (key) => {
         const fields = this.formFields
-        const rules = this.fieldRules[key]
+        const rules = this.fieldRules[key] ?? {}
         const value = fields[key]
         if (rules) {
             const { type, ...otherRules } = rules
             this.fieldErrors[key] = ''
-            if (otherRules.required) {
-                const error = this.validateRequired(type, key, value, otherRules.required)
-                if (error) {
-                    this.fieldErrors[key] = error
-                    return
-                }
+            const validateParams = {
+                type,
+                field: key,
+                fieldValue: value,
             }
 
-            if (otherRules.min) {
-                const error = this.validateMin(type, value, otherRules.min)
+            for(let rule in otherRules) {
+                if (!otherRules[rule]) continue
+                validateParams.ruleConfig = otherRules[rule]
+                const error = this.rulesFunc[rule](validateParams)
                 if (error) {
                     this.fieldErrors[key] = error
-                    return
-                }
-            }
-
-            if (otherRules.max) {
-                const error = this.validateMax(type, value, otherRules.max)
-                if (error) {
-                    this.fieldErrors[key] = error
-                    return
-                }
-            }
-
-            if (otherRules.test) {
-                const error = this.validateTest(type, value, otherRules.test)
-                if (error) {
-                    this.fieldErrors[key] = error
-                    return
+                    break
                 }
             }
         }
@@ -187,7 +179,15 @@ const formUtil = class {
             this.validateField(field)
         }
 
-        return this.getFormErrors()
+        const formErrors = this.getFormErrors()
+        const errorTags = document.getElementsByClassName('formErrorMessage')
+        for (let error in formErrors) {
+            const errorTag = errorTags[error]
+            errorTag.innerHTML = ''
+            if (formErrors[error] && errorTag) {
+                errorTag.innerHTML = formErrors[error]
+            }
+        }
     }
 }
 

@@ -88,13 +88,12 @@
                 Validar Formulario
             </button>
         </div>
-        <script src="form.js" type="text/javascript"></script>
+        <script src="../../form.js" type="text/javascript"></script>
         <script>
             const form1 = initFormInstance()
             const form2 = initFormInstance()
             window.onload = () => {
                 form1.createForm({
-                    key: 'test-1',
                     fields: {
                         name: {
                             type: form1.FieldTypes.STRING,
@@ -112,7 +111,6 @@
                 })
 
                 form2.createForm({
-                    key: 'test-2',
                     fields: {
                         phoneNumber: {
                             type: form2.FieldTypes.STRING,
@@ -139,14 +137,7 @@
             }
 
             const validateForm = (form) => {
-                const errors = form.validateForm()
-                const errorTags = document.getElementsByClassName('formErrorMessage')
-                for (let error in errors) {
-                    const errorTag = errorTags[error]
-                    if (errors[error] && errorTag) {
-                        errorTag.innerHTML = errors[error]
-                    } else errorTag.innerHTML = ''
-                }
+               form.validateForm()
             }
         </script>
     </body>
