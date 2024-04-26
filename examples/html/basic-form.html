@@ -43,6 +43,15 @@
                 >
                 <span id="age" class="formErrorMessage" />
             </div>
+            <div class="mb-3">
+                <label for="age" class="form-label">Edad</label>
+                <input
+                    type="checkbox"
+                    id="termAndConditions"
+                    onchange="onChangeFieldValue('termAndConditions', this.checked)"
+                >
+                <span id="termAndConditions" class="formErrorMessage" />
+            </div>
             <button
                 type="button"
                 class="btn btn-primary"
@@ -51,7 +60,7 @@
                 Validar Formulario
             </button>
         </div>
-        <script src="../../dist/form.min.js" type="text/javascript"></script>
+        <script src="../../form.js" type="text/javascript"></script>
         <script>
             const form = initFormInstance()
             window.onload = () => {
@@ -67,15 +76,25 @@
                             type: form.FieldTypes.NUMBER,
                             required: true,
                             min: {
-                                value: 10,
+                                value: 18
+                            },
+                            max: {
+                                value: 40
                             }
+                        },
+                        termAndConditions: {
+                            type: form.FieldTypes.BOOL,
+                            required: {
+                                message: 'Acepta los terminos y condiciones'
+                            },
                         }
                     }
                 })
 
                 form.setValues({
                     name: 'Flor Bello',
-                    age: 40
+                    age: 40,
+                    termAndConditions: true
                 })
             }
 

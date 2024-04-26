@@ -24,9 +24,7 @@ const formUtil = class {
     
     validateRequired = ({ type, field, fieldValue, ruleConfig }) => {
         let hasError = false
-        if (type === this.FieldTypes.BOOL) {
-            if (fieldValue === undefined) hasError = true
-        } else if (!fieldValue) {
+        if (!fieldValue) {
             hasError = true
         }
 
@@ -132,9 +130,10 @@ const formUtil = class {
         let fields = this.formFields
         for(let field in fields) {
             if (field === key) {
+                const { type } = this.fieldRules[field]
                 const fieldComponent = document.getElementById(field)
                 fields[field] = value
-                fieldComponent.setAttribute('value', value  ?? '')
+                fieldComponent.setAttribute(type === this.FieldTypes.BOOL ? 'checked' :'value', value  ?? '')
             }
         }
     }
@@ -183,9 +182,8 @@ const formUtil = class {
         const errorTags = document.getElementsByClassName('formErrorMessage')
         for (let error in formErrors) {
             const errorTag = errorTags[error]
-            errorTag.innerHTML = ''
-            if (formErrors[error] && errorTag) {
-                errorTag.innerHTML = formErrors[error]
+            if (errorTag) {
+                errorTag.innerHTML = formErrors[error] ?? ''
             }
         }
     }
